@@ -63,19 +63,18 @@ Should also work with floats::
     3.6
 """
 
+
 def local_rain(buildings):
 
     # Finds the smaller of the two "bookend" maxima
     smaller_max = min(buildings[0], buildings[-1])
 
     rain = 0
-    
+
     # Add difference between each building and smaller_max to rain
     for bldg in buildings[1:-1]:
         rain += smaller_max - bldg
-    
-    # print "The set of local buildings is: ", buildings
-    # print "The measured rain is: ", rain    
+
     return rain
 
 
@@ -89,33 +88,53 @@ def rain(buildings):
         left_bldg = buildings.index(max(buildings))
         right_bldg = left_bldg
 
-        print "Initial max bldg: ", left_bldg
+        # Create list of buildings to the left of the tallest building.
+        # Check if the tallest building is on the far right. If so,
+        # pass in whole list of buildings to avoid an IndexError when slicing.
+        if left_bldg == len(buildings) - 1:
+            left_list = buildings
+        else:
+            left_list = buildings[:left_bldg + 1]
 
-        left_list = buildings[:left_bldg + 1]
+        # Create list of buildings to the right of the tallest building,
+        # including the tallest.
         right_list = buildings[right_bldg:]
 
-        print "Initial left_list: ", left_list
-        print "Initial right_list: ", right_list
+        # Loop through buildings to the left and right of the max,
+        # tabulating local rain catchement as you go. Cities with two buildings
+        # or less will collect no rain and return 0.
 
         while len(left_list) > 2:
 
             # Find the next tallest building on the left
-            left_bldg = left_list.index(max(left_list[:left_bldg]))
-            # Add all the rain 
+            left_bldg = left_list.index(max(left_list[:-1]))
+
+            # Add all the rain beetween the two bookend maxima
             rain += local_rain(left_list[left_bldg:])
 
-            # Reassign left_list to everything left of left_bldg
+            # Reassign left_list to everything left of left_bldg, inclusive
             left_list = left_list[:left_bldg + 1]
-            
 
         while len(right_list) > 2:
-            # Find the next tallest building on the right
-            right_bldg = right_list.index(max(right_list[1:]))
-            
-            # Add all the rain 
-            rain += local_rain(right_list[:right_bldg])
 
-            # Reassign right list
+            # List of all buildings to the right of the last max,
+            # not including it.
+            right_list_excl = right_list[1:]
+
+            # Find the index of the next tallest building on the right
+            right_bldg = right_list_excl.index(max(right_list_excl)) + 1
+
+            # Add all the rain:
+            # If the max height building is on the right-most edge,
+            # pass whole list to local_rain, otherwise, add one to outer index
+            # so that the slice includes right_bldg. This approach avoids
+            # an IndexError.
+            if right_bldg == len(right_list) - 1:
+                rain += local_rain(right_list)
+            else:
+                rain += local_rain(right_list[:right_bldg + 1])
+
+            # Reassign right list to everything right of right_bldg, inclusive
             right_list = right_list[right_bldg:]
 
     return rain
