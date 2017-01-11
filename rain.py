@@ -112,17 +112,14 @@ def local_rain(buildings):
     smaller_max = min(buildings[0], buildings[-1])
 
     rain = 0
-    
+
     # Add difference between each building and smaller_max to rain
     for bldg in buildings[1:-1]:
         rain += smaller_max - bldg
-    
+
     # print "The set of local buildings is: ", buildings
-    # print "The measured rain is: ", rain    
+    # print "The measured rain is: ", rain
     return rain
-
-
-
 
 
 def rain(buildings):
