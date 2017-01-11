@@ -89,20 +89,34 @@ def rain(buildings):
         left_bldg = buildings.index(max(buildings))
         right_bldg = left_bldg
 
+        print "Initial max bldg: ", left_bldg
+
         left_list = buildings[:left_bldg + 1]
         right_list = buildings[right_bldg:]
 
+        print "Initial left_list: ", left_list
+        print "Initial right_list: ", right_list
+
         while len(left_list) > 2:
 
+            # Find the next tallest building on the left
             left_bldg = left_list.index(max(left_list[:left_bldg]))
+            # Add all the rain 
+            rain += local_rain(left_list[left_bldg:])
+
+            # Reassign left_list to everything left of left_bldg
             left_list = left_list[:left_bldg + 1]
-            rain += local_rain(left_list)
+            
 
         while len(right_list) > 2:
-
+            # Find the next tallest building on the right
             right_bldg = right_list.index(max(right_list[1:]))
+            
+            # Add all the rain 
+            rain += local_rain(right_list[:right_bldg])
+
+            # Reassign right list
             right_list = right_list[right_bldg:]
-            rain += local_rain(right_list)
 
     return rain
 
